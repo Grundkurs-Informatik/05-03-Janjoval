@@ -199,43 +199,39 @@ public class Kartenmanager_SuS extends Ereignisanwendung {
     // ----------------------------------------------------------
 
     public void Sort_Klick() {
-        loescheAnzeige();
-        startZeit = System.nanoTime();
+    loescheAnzeige();
+    startZeit = System.nanoTime();
 
-        // z.B. 1000 Durchläufe
-        for(int I=0; I<1000; I++){
-            boolean sortiert = true;
-            karten = new Liste<Karte>(); 
-            initialisiereKarten(0);
-            do
-            {
-                sortiert = true;
-                for(int i = 1; i < karten.laenge(); i++)
-                {
-                    karten.geheZuPosition(i);
-                    Karte Karte_a = karten.aktuellesElement();           
-                    karten.geheZuPosition(i+1);
-                    Karte Karte_b = karten.aktuellesElement();
-                    if(Karte_a.wert > Karte_b.wert||Karte_a.wert == Karte_b.wert && Karte_a.farbe < Karte_b.farbe)
-                    {
-                        karten.ersetzeAktuelles(Karte_a);
-                        karten.geheZuPosition(i);
-                        karten.ersetzeAktuelles(Karte_b);
-                        sortiert = false;
-                    }
-                }
+    // Führe den Insertion Sort-Algorithmus aus
+    for (int i = 1; i < kartenAnzahl; i++) {
+        karten.geheZuPosition(i + 1);
+        Karte key = karten.aktuellesElement();
+        int j = i - 1;
 
-            }while(!sortiert);
+        // Bewege durch den sortierten Teil der Liste
+        while (j >= 0) {
+            karten.geheZuPosition(j + 1);
+            Karte karteJ = karten.aktuellesElement();
 
+            if (karteJ.wert > key.wert || (karteJ.wert == key.wert && karteJ.farbe > key.farbe)) {
+                karten.geheZuPosition(j + 2);
+                karten.ersetzeAktuelles(karteJ);
+                j--;
+            } else {
+                break;
+            }
         }
-
-        endZeit=System.nanoTime();
-        double d = endZeit - startZeit;
-        d = d/1000000;
-
-        zeichneKarten(0, 50, 150);
-        infoEtikett.setzeInhalt("Erfolgreich Sortiert. Zeit: "+ d + " ms");
+        karten.geheZuPosition(j + 2);
+        karten.ersetzeAktuelles(key);
     }
+
+    endZeit = System.nanoTime();
+    double d = endZeit - startZeit;
+    d = d / 1000000;
+
+    zeichneKarten(0, 50, 150);
+    infoEtikett.setzeInhalt("Erfolgreich Sortiert. Zeit: " + d + " ms");
+}
 
 
     public void Update_Klick() {
